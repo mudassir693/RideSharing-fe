@@ -1,7 +1,19 @@
 import logo from './logo.svg';
 import './App.css';
 
+import {io} from 'socket.io-client'
+import { useEffect } from 'react';
+
+
 function App() {
+  useEffect(()=>{
+    let socket = io("http://localhost:5000")
+    console.log(socket)
+    socket.on('first',()=>{
+      console.log('socket works fine')
+      socket.emit("second",{random: Math.random()})
+    })
+  })
   return (
     <div className="App">
       <header className="App-header">
