@@ -13,19 +13,21 @@ function MapComponent() {
     let socket
 
     const [cordinates,setCordinates] = useState({lng:"",lat:""})
+    // 
 
     useEffect(()=>{
 
-        socket = io("https://git.heroku.com/uber-dungeonmaster.git")
-        // console.log(socket)
+        socket = io("http://localhost:5000")
+        console.log(socket)
         // socket.on('first',()=>{
         //   console.log('socket works fine')
         //   socket.emit("second",{random: Math.random()})
         // })
 
 
-        // //
+        ////
 
+        let cor;
         if (navigator.geolocation) {
             var location_timeout = setTimeout("geolocFail()", 10000);
         
@@ -34,8 +36,10 @@ function MapComponent() {
         
                 var lat = position.coords.latitude;
                 var lng = position.coords.longitude;
-        
+                
+                cor={lng,lat}
                 // geocodeLatLng(lat, lng);
+
                 setCordinates({lng,lat})
                 console.log('location is: ',{lat,lng})
             }, function(error) {
@@ -52,30 +56,51 @@ function MapComponent() {
         map = new mapboxgl.Map({
             container: 'mapbox',
             style:"mapbox://styles/mapbox/streets-v11",
-            center:[cordinates.lng,cordinates.lat],
-            zoom:15
+            center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
+            zoom:17
         })
         
     },[])
-    // 
+    
+    
+    // let map1 = new mapboxgl.Map({})
 
+    map?.on('movestart', () => {
+        console.log('A movestart` event occurred.');
+    });
 
-    useEffect(()=>{
-        new mapboxgl.Marker()
-            .setLngLat([cordinates.lng,cordinates.lat])
-            .addTo(map);
-    },[cordinates])
+    // map1.on('move', () => {
+    //     console.log('A move event occurred.');
+    // });
+
+    // map1.on('moveend', () => {
+    //     console.log('A moveend event occurred.');
+    // });
 // 
+
+    // useEffect(()=>{
+    //     console.log('b: cordinates change')
+    //     new mapboxgl.Marker()
+    //         .setLngLat(cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607])
+    //         // .setLngLat([67.3644544,24.870912])
+    //         .addTo(map);
+    // },[cordinates])
+
     const setMarker = (map)=>{
         let marker = new mapboxgl.Marker()
                 .setLngLat([67.1282601,24.9789795]).addTo(map);
             console.log(marker)
         }
     
+    let b=0
     const trackLocation =async ()=>{
+        
+        let newCords;
         if (navigator.geolocation) {
             var location_timeout = setTimeout("geolocFail()", 10000);
+        b+=1
         
+        console.log('b: ',b)
             navigator.geolocation.getCurrentPosition(function(position) {
                 clearTimeout(location_timeout);
         
@@ -83,6 +108,18 @@ function MapComponent() {
                 var lng = position.coords.longitude;
         
                 // geocodeLatLng(lat, lng);
+                socket.emit("first2",{
+                    cordinates:{lng,lat}
+                })
+                // 
+                newCords={lng,lat}
+                // new mapboxgl.Marker()
+                //     .addTo(map)
+                //     .remove()
+                new mapboxgl.Marker()
+                    .setLngLat([lng,lat])
+                    // .setLngLat([67.3644544,24.870912])
+                    .addTo(map);
                 setCordinates({lng,lat})
                 console.log('location is: ',{lat,lng})
             }, function(error) {
@@ -90,26 +127,32 @@ function MapComponent() {
                 console.log('location cant find: ')
 
             });
-            
+            // 
         } else {
             // Fallback for no geolocation
             // geolocFail();
+            // 
             console.log('location cant find: ')
         }
         // console.log('it is workingfine')
-        if(cordinates.lng!==''){
-            socket.emit("first2",{
-                cordinates,
-            })
-        }
-
+        // if(cordinates.lng!==''){
+        //   socket.emit("first2",{
+        //         cordinates
+        //     })
+        // }
+// 
+// 
         socket.on("accepted",(resp)=>{
             // console.log(resp)
         })
+
+        // new mapboxgl.Marker()
+                //     .addTo(map)
+                //     .remove()
     }
     // trackLocation()//
 
-    setInterval(()=>trackLocation(),5000)
+    setInterval(()=>trackLocation(),10000)
   return (
     <div className="w-100vw h-[100%] relative" id="mapbox"></div>
   )
