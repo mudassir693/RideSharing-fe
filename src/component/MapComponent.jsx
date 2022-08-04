@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react'
+import React, { useEffect,useMemo,useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 // import 'mapbox-gl/dist/mapbox-gl.css'; 
@@ -8,9 +8,10 @@ import {io} from 'socket.io-client'
 
 mapboxgl.accessToken = "pk.eyJ1IjoibXVoYW1tYWQtbXVkYXNzaXIiLCJhIjoiY2w1OWxlMnAxMGYwZjNjcDRzeWp5YnZtOSJ9.yovt1JF_3gAzGl2KAhK2qA"
 
-function MapComponent() {
+function MapComponent({setLocationAdded,locationAdded}) {
     let map;
     let socket
+    // const [locationAdded,setLocationAdded] = useState(false)
 
     const [cordinates,setCordinates] = useState({lng:"",lat:""})
     // 
@@ -59,17 +60,24 @@ function MapComponent() {
             center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
             zoom:17
         })
+
+        map.on('load', () => {
+            console.log('Load event Occured');
+        });
         
-    },[])
+    },[cordinates.lat])
+    // 
     
-    
+    // map.on('movestart', () => {
+    //     console.log('A movestart` event occurred.');
+    // });
     // let map1 = new mapboxgl.Map({})
 
-    map?.on('movestart', () => {
-        console.log('A movestart` event occurred.');
-    });
+    // map?.on('movestart', () => {
+    //     console.log('A movestart` event occurred.');
+    // });
 
-    // map1.on('move', () => {
+    // map.on('move', () => {
     //     console.log('A move event occurred.');
     // });
 
@@ -91,8 +99,20 @@ function MapComponent() {
                 .setLngLat([67.1282601,24.9789795]).addTo(map);
             console.log(marker)
         }
+// s
+
+        // useMemo(()=>{
+        //     console.log('what are you looking 4: ',cordinates.lng," ",cordinates.lat)
+        //     new mapboxgl.Marker()
+        //         .setLngLat([cordinates.lng,cordinates.lat])
+        //         // .setLngLat([67.3644544,24.870912])
+        //         .addTo(map);
+        // },[cordinates.lat,cordinates.lng])
     
     let b=0
+    const removeMarker = ()=>{
+        
+    }
     const trackLocation =async ()=>{
         
         let newCords;
@@ -113,13 +133,30 @@ function MapComponent() {
                 })
                 // 
                 newCords={lng,lat}
+                
                 // new mapboxgl.Marker()
                 //     .addTo(map)
                 //     .remove()
-                new mapboxgl.Marker()
-                    .setLngLat([lng,lat])
-                    // .setLngLat([67.3644544,24.870912])
-                    .addTo(map);
+                    // create a HTML element for each feature
+                const el = document.createElement('div');
+                el.className = 'marker';
+                  
+                console.log('location added: ', locationAdded)
+                // make a marker for each feature and add to the map
+
+                if(!locationAdded?.lng){
+                    let nawteachnique = new mapboxgl.Marker(el).setLngLat([lng,lat]).addTo(map);
+                    setLocationAdded(nawteachnique)
+                }else{
+                    locationAdded._updateMoving(()=>{
+                        console.log('moving')
+                    })
+                    setLocationAdded()
+// 
+                    // new mapboxgl.Marker(el).setLngLat([lng,lat]);
+                    // setLocationAdded(false)
+                }
+                //   
                 setCordinates({lng,lat})
                 console.log('location is: ',{lat,lng})
             }, function(error) {
@@ -140,7 +177,7 @@ function MapComponent() {
         //         cordinates
         //     })
         // }
-// 
+
 // 
         socket.on("accepted",(resp)=>{
             // console.log(resp)
@@ -152,7 +189,7 @@ function MapComponent() {
     }
     // trackLocation()//
 
-    setInterval(()=>trackLocation(),10000)
+    setInterval(()=>trackLocation(),5000)
   return (
     <div className="w-100vw h-[100%] relative" id="mapbox"></div>
   )
