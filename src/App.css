@@ -6,3 +6,14 @@
     border-radius: 50%;
     cursor: pointer;
   }
+
+  .car-marker {
+    background-image: url('./assets/car.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    cursor: pointer;
+  }

@@ -1,4 +1,4 @@
-import React, { useEffect,useMemo,useState } from 'react'
+import React, { useEffect,useLayoutEffect,useMemo,useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 // import 'mapbox-gl/dist/mapbox-gl.css'; 
@@ -8,15 +8,16 @@ import {io} from 'socket.io-client'
 
 mapboxgl.accessToken = "pk.eyJ1IjoibXVoYW1tYWQtbXVkYXNzaXIiLCJhIjoiY2w1OWxlMnAxMGYwZjNjcDRzeWp5YnZtOSJ9.yovt1JF_3gAzGl2KAhK2qA"
 
-function MapComponent({setLocationAdded,locationAdded}) {
+function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
     let map;
     let socket
     // const [locationAdded,setLocationAdded] = useState(false)
 
     const [cordinates,setCordinates] = useState({lng:"",lat:""})
+    const [driverCordinates,setDriverCordinates] = useState({lng:'',lat:''})
     // 
 
-    useEffect(()=>{
+    useLayoutEffect(()=>{
 
         socket = io("http://localhost:5000")
         console.log(socket)
@@ -53,20 +54,57 @@ function MapComponent({setLocationAdded,locationAdded}) {
             // geolocFail();
             console.log('location cant find: ')
         }
+        
+    },[])
+
+    useEffect(()=>{
+
+        // socket = io("http://localhost:5000")
+        // console.log(socket)
+
 
         map = new mapboxgl.Map({
             container: 'mapbox',
             style:"mapbox://styles/mapbox/streets-v11",
             center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
-            zoom:17
+            zoom:13
         })
 
-        map.on('load', () => {
-            console.log('Load event Occured');
-        });
+        // map.on('load', () => {
+        //     console.log('Load event Occured');
+        // });
+
+        new mapboxgl.Marker()
+                .setLngLat([cordinates.lng,cordinates.lat]).addTo(map);
+
+        console.log('here we catch driver movement: ..')
+
+        const el = document.createElement('div');
+                el.className = 'car-marker';
+
+        new mapboxgl.Marker(el)
+                .setLngLat([driverCordinates.lng,driverCordinates.lat]).addTo(map);
         
-    },[cordinates.lat])
+    },[driverCordinates.lat,driverCordinates.lng])
+
+
+    
+
+    
     // 
+
+    const getDriverLocation = ()=>{
+        socket.emit('Booker',{
+            id: '1'
+        })
+
+        socket.on('driverLocation',(resp)=>{
+            console.log('driver catch: ',resp.driver.lng)
+            setDriverCordinates({lng:resp.driver.lng,lat:resp.driver.lat})
+        })
+    }
+
+    setInterval(()=>getDriverLocation(),3000)
     
     // map.on('movestart', () => {
     //     console.log('A movestart` event occurred.');
@@ -189,11 +227,11 @@ function MapComponent({setLocationAdded,locationAdded}) {
     }
     // trackLocation()//
 
-    setInterval(()=>trackLocation(),5000)
+    // setInterval(()=>trackLocation(),5000)
     
   return (
     <div className="w-100vw h-[100%] relative" id="mapbox"></div>
   )
 }
 
-export default MapComponent
+export default CarNavigationmapComponent
