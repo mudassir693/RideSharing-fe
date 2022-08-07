@@ -56,7 +56,7 @@ function MapComponent({setLocationAdded,locationAdded}) {
         var map1 = new mapboxgl.Map({
             container: 'mapbox',
             style:"mapbox://styles/mapbox/streets-v11",
-            center:cordinates.lng!==''?[lng,lat]:[67.0011,24.8607],
+            center:lng?[lng,lat]:[67.0011,24.8607],
             zoom:11
         })
 
@@ -66,6 +66,11 @@ function MapComponent({setLocationAdded,locationAdded}) {
                 .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
 
         setUserMarker(marker1)
+
+        // map1.flyTo({
+        //     center: [cordinates.lng,cordinates.lat],
+        //     speed: 0.2
+        // });
 
     },[])
     // 
@@ -98,6 +103,14 @@ function MapComponent({setLocationAdded,locationAdded}) {
             .setLngLat([cordinates.lng,cordinates.lat]).addTo(map);
 
         setUserMarker(marker1)
+        // const center = new mapboxgl.LngLat(cordinates.lng, cordinates.lat);
+        // map.setCenter(center)
+        if(map){
+            map.flyTo({
+                center: [cordinates.lng,cordinates.lat],
+                speed: 0.4
+            });
+        }
     },[cordinates.lng,cordinates.lat])
     // 
     
