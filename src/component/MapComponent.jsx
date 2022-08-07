@@ -62,10 +62,10 @@ function MapComponent({setLocationAdded,locationAdded}) {
 
         setMap(map1)
 
-        var marker1 = new mapboxgl.Marker()
-                .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
+        // var marker1 = new mapboxgl.Marker()
+        //         .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
 
-        setUserMarker(marker1)
+        // setUserMarker(marker1)
 
         // map1.flyTo({
         //     center: [cordinates.lng,cordinates.lat],
