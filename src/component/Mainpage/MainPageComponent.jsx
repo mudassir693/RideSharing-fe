@@ -19,9 +19,9 @@ function MainPageComponent() {
                 <div className="text-white font-semibold text-5xl text-center">
                     Mr. Travel 
                 </div>
-                <div className="text-white font-medium text-1xl text-center">
-                    GitHub: @mudassir693
-                </div>
+                {/* <div className="text-white font-medium text-1xl text-center">
+                    
+                </div> */}
                 <div className="btnContainer flex justify-around items-center w-[100%] my-5">
                     <div onClick={()=>navigate('/personalNavigation')} className="eachBtn mx-2 px-5 py-2 bg-white cursor-pointer border-color-[#66c6f4] border-2 text-black rounded-full">
                         Live Navigator
