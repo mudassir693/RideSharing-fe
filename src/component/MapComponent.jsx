@@ -4,6 +4,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 // import 'mapbox-gl/dist/mapbox-gl.css'; 
 import {io} from 'socket.io-client'
 
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default; // eslint-disable-line
+
 
 
 mapboxgl.accessToken = "pk.eyJ1IjoibXVoYW1tYWQtbXVkYXNzaXIiLCJhIjoiY2w1OWxlMnAxMGYwZjNjcDRzeWp5YnZtOSJ9.yovt1JF_3gAzGl2KAhK2qA"
