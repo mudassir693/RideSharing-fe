@@ -1,4 +1,4 @@
-import React, { useEffect,useMemo,useState } from 'react'
+import React, { useEffect,useLayoutEffect,useMemo,useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 // import 'mapbox-gl/dist/mapbox-gl.css'; 
@@ -11,36 +11,33 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 mapboxgl.accessToken = "pk.eyJ1IjoibXVoYW1tYWQtbXVkYXNzaXIiLCJhIjoiY2w1OWxlMnAxMGYwZjNjcDRzeWp5YnZtOSJ9.yovt1JF_3gAzGl2KAhK2qA"
 
 function MapComponent({setLocationAdded,locationAdded}) {
-    let map;
+    // let map;
     let socket
     // const [locationAdded,setLocationAdded] = useState(false)
 
     const [cordinates,setCordinates] = useState({lng:"",lat:""})
+    const [usermarker,setUserMarker] = useState(null)
+    const [map,setMap] = useState()
     // 
 
     useEffect(()=>{
 
-        socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
-        // socket = io("http://localhost:5000")
+        // socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
+        socket = io("http://localhost:5000")
 
         console.log(socket)
-        // socket.on('first',()=>{
-        //   console.log('socket works fine')
-        //   socket.emit("second",{random: Math.random()})
-        // })
-
-
-        ////
 
         let cor;
+        var lat
+        var lng;
         if (navigator.geolocation) {
             var location_timeout = setTimeout("geolocFail()", 10000);
         
             navigator.geolocation.getCurrentPosition(function(position) {
                 clearTimeout(location_timeout);
         
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
+                lat = position.coords.latitude;
+                lng = position.coords.longitude;
                 
                 cor={lng,lat}
                 // geocodeLatLng(lat, lng);
@@ -53,23 +50,55 @@ function MapComponent({setLocationAdded,locationAdded}) {
 
             });
         } else {
-            // Fallback for no geolocation
-            // geolocFail();
             console.log('location cant find: ')
         }
 
-        map = new mapboxgl.Map({
+        var map1 = new mapboxgl.Map({
             container: 'mapbox',
             style:"mapbox://styles/mapbox/streets-v11",
-            center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
-            zoom:17
+            center:cordinates.lng!==''?[lng,lat]:[67.0011,24.8607],
+            zoom:11
         })
 
-        map.on('load', () => {
-            console.log('Load event Occured');
-        });
-        
-    },[cordinates.lat])
+        setMap(map1)
+
+        var marker1 = new mapboxgl.Marker()
+                .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
+
+        setUserMarker(marker1)
+
+    },[])
+    // 
+
+    // useEffect(()=>{
+    //    var map1 = new mapboxgl.Map({
+    //         container: 'mapbox',
+    //         style:"mapbox://styles/mapbox/streets-v11",
+    //         center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
+    //         zoom:17
+    //     })
+
+    //     setMap(map1)
+
+    //     var marker1 = new mapboxgl.Marker()
+    //             .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
+
+    //     setUserMarker(marker1)
+    // },[])
+// 
+    useEffect(()=>{
+        console.log('user move:..')
+        if(usermarker){
+            usermarker.remove()
+        }
+        const el = document.createElement('div');
+        el.className = 'marker';
+
+        var marker1 = new mapboxgl.Marker(el)
+            .setLngLat([cordinates.lng,cordinates.lat]).addTo(map);
+
+        setUserMarker(marker1)
+    },[cordinates.lng,cordinates.lat])
     // 
     
     // map.on('movestart', () => {

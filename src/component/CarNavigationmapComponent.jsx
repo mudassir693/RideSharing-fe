@@ -11,18 +11,19 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 mapboxgl.accessToken = "pk.eyJ1IjoibXVoYW1tYWQtbXVkYXNzaXIiLCJhIjoiY2w1OWxlMnAxMGYwZjNjcDRzeWp5YnZtOSJ9.yovt1JF_3gAzGl2KAhK2qA"
 
 function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
-    let map;
+    let [map,setMap] = useState()
     let socket
     // const [locationAdded,setLocationAdded] = useState(false)
 
     const [cordinates,setCordinates] = useState({lng:"",lat:""})
+    const [carmarker, setCarmarker] = useState(null)
     const [driverCordinates,setDriverCordinates] = useState({lng:'',lat:''})
     // 
 
     useLayoutEffect(()=>{
 
-        socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
-        // socket = io("http://localhost:5000",{ transports: ['websocket'] })
+        // socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
+        socket = io("http://localhost:5000",{ transports: ['websocket'] })
 
         console.log(socket)
         // socket.on('first',()=>{
@@ -59,36 +60,61 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
             console.log('location cant find: ')
         }
         
+
     },[])
 
     useEffect(()=>{
-
+        console.log('cordinates update:..')
         // socket = io("http://localhost:5000")
         // console.log(socket)
 
 
-        map = new mapboxgl.Map({
-            container: 'mapbox',
-            style:"mapbox://styles/mapbox/streets-v11",
-            center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
-            zoom:13
-        })
+        
 
         // map.on('load', () => {
         //     console.log('Load event Occured');
         // });
 
-        new mapboxgl.Marker()
-                .setLngLat([cordinates.lng,cordinates.lat]).addTo(map);
+        
+        
+       var map1 = new mapboxgl.Map({
+            container: 'mapbox',
+            style:"mapbox://styles/mapbox/streets-v11",
+            center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
+            zoom:9
+        })
+        setMap(map1)
+        // new mapboxgl.Marker()
+        //         .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
 
-        console.log('here we catch driver movement: ..')
+        // console.log('here we catch driver movement: ..')
+
+        // new mapboxgl.Marker(el)
+        //         .setLngLat([driverCordinates.lng,driverCordinates.lat]).addTo(map);
+        // 
+
+    //     const el = document.createElement('div');
+    //     el.className = 'car-marker';
+    //    var carmarker1 =  new mapboxgl.Marker(el)
+    //     .setLngLat([driverCordinates.lng,driverCordinates.lat]).addTo(map1);
+
+        // setCarmarker(carmarker1)
+    },[])
+
+    useEffect(()=>{
+
+        new mapboxgl.Marker()
+        .setLngLat([cordinates.lng,cordinates.lat]).addTo(map);
+        if(carmarker){
+            carmarker.remove()
+        }
+        console.log('here we catch driver movement: ..',driverCordinates.lng,'..',driverCordinates.lat)
 
         const el = document.createElement('div');
-                el.className = 'car-marker';
-
-        new mapboxgl.Marker(el)
-                .setLngLat([driverCordinates.lng,driverCordinates.lat]).addTo(map);
-        
+        el.className = 'car-marker';
+        var carmarker1 =  new mapboxgl.Marker(el)
+        .setLngLat([driverCordinates.lng,driverCordinates.lat]).addTo(map);
+        setCarmarker(carmarker1)
     },[driverCordinates.lat,driverCordinates.lng])
 
 
