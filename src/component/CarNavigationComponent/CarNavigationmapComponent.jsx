@@ -22,8 +22,8 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
 
     useLayoutEffect(()=>{
 
-        // socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
-        socket = io("http://localhost:5000",{ transports: ['websocket'] })
+        socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
+        // socket = io("http://localhost:5000",{ transports: ['websocket'] })
 
         console.log(socket)
         // socket.on('first',()=>{
@@ -79,6 +79,7 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
         
        var map1 = new mapboxgl.Map({
             container: 'mapbox',
+            // projection: 'globe'
             style:"mapbox://styles/mapbox/streets-v11",
             center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
             zoom:11
@@ -121,7 +122,7 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
         if(map){
                 const cords = [[driverCordinates.lng,driverCordinates.lat], [cordinates.lng,cordinates.lat]];
                 map.fitBounds(cords, {
-                    padding:35
+                    padding:50
                 // padding: {top:25, bottom:15, left: 15, right: 15}
             });
         }

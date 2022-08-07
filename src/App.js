@@ -5,6 +5,7 @@ import {BrowserRouter,Routes,Route} from "react-router-dom";
 import { useEffect } from 'react';
 import Dashboard from './pages/Dashboard';
 import CarNavigation from './pages/CarNavigation';
+import Main from './pages/Main';
 // import 'mapbox-gl/dist/mapbox-gl.css'; 
 
 
@@ -13,6 +14,7 @@ function App() {
     <div className="">
       <BrowserRouter >
         <Routes >
+          <Route path="/" element={<Main />} />
           <Route path="/personalNavigation" element={<Dashboard socket="socket" />} />
           <Route path="/carNavigation" element={<CarNavigation socket="socket" />} />
 

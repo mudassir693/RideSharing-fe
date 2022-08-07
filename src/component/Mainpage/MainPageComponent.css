@@ -1,0 +1,8 @@
+.MainPageContainer {
+    background: url('./../../assets/Globe.jpeg');
+    /* object-fit:'contain'; */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-family: 'Libre Baskerville', serif;
+}

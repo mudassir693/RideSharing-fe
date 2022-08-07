@@ -22,8 +22,8 @@ function MapComponent({setLocationAdded,locationAdded}) {
 
     useEffect(()=>{
 
-        // socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
-        socket = io("http://localhost:5000")
+        socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
+        // socket = io("http://localhost:5000")
 
         console.log(socket)
 
