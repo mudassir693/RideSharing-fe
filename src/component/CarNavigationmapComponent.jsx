@@ -81,9 +81,11 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
             container: 'mapbox',
             style:"mapbox://styles/mapbox/streets-v11",
             center:cordinates.lng!==''?[cordinates.lng,cordinates.lat]:[67.0011,24.8607],
-            zoom:9
+            zoom:11
         })
         setMap(map1)
+
+        
         // new mapboxgl.Marker()
         //         .setLngLat([cordinates.lng,cordinates.lat]).addTo(map1);
 
@@ -115,7 +117,15 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
         var carmarker1 =  new mapboxgl.Marker(el)
         .setLngLat([driverCordinates.lng,driverCordinates.lat]).addTo(map);
         setCarmarker(carmarker1)
-    },[driverCordinates.lat,driverCordinates.lng])
+
+        if(map){
+                const cords = [[driverCordinates.lng,driverCordinates.lat], [cordinates.lng,cordinates.lat]];
+                map.fitBounds(cords, {
+                    padding:35
+                // padding: {top:25, bottom:15, left: 15, right: 15}
+            });
+        }
+},[driverCordinates.lat,driverCordinates.lng])
 
 
     
