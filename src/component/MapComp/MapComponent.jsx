@@ -10,7 +10,7 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 
 mapboxgl.accessToken = "pk.eyJ1IjoibXVoYW1tYWQtbXVkYXNzaXIiLCJhIjoiY2w1OWxlMnAxMGYwZjNjcDRzeWp5YnZtOSJ9.yovt1JF_3gAzGl2KAhK2qA"
 
-function MapComponent({setLocationAdded,locationAdded}) {
+function MapComponent({setCurrentLocation,destinationMarker,setDestinationMarker,locationSelected,setLocationSelected,setLocationAdded,destination,locationAdded,setDestination}) {
     // let map;
     let socket
     // const [locationAdded,setLocationAdded] = useState(false)
@@ -22,8 +22,8 @@ function MapComponent({setLocationAdded,locationAdded}) {
 
     useEffect(()=>{
 
-        socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
-        // socket = io("http://localhost:5000")
+        // socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
+        socket = io("http://localhost:5000")
 
         console.log(socket)
 
@@ -96,6 +96,9 @@ function MapComponent({setLocationAdded,locationAdded}) {
         if(usermarker){
             usermarker.remove()
         }
+        if(destinationMarker){
+            destinationMarker.remove()
+        }
         const el = document.createElement('div');
         el.className = 'marker';
 
@@ -103,17 +106,67 @@ function MapComponent({setLocationAdded,locationAdded}) {
             .setLngLat([cordinates.lng,cordinates.lat]).addTo(map);
 
         setUserMarker(marker1)
+        setCurrentLocation({lng:cordinates.lng,lat:cordinates.lat})
+
+        if(destination){var destMarker = new mapboxgl.Marker({draggable:true})
+            .setLngLat([destination?.lng,destination?.lat]).addTo(map);
+        setDestinationMarker(destMarker)}
+
+
         // const center = new mapboxgl.LngLat(cordinates.lng, cordinates.lat);
         // map.setCenter(center)
-        if(map){
+        if(map && destination.lng==''){
             map.flyTo({
                 center: [cordinates.lng,cordinates.lat],
                 speed: 0.4
             });
         }
-    },[cordinates.lng,cordinates.lat])
+
+        if(map && destination.lng !== ''){
+            
+                const cords = [[destination.lng,destination.lat], [cordinates.lng,cordinates.lat]];
+                map.fitBounds(cords, {
+                    padding:50
+                // padding: {top:25, bottom:15, left: 15, right: 15}
+            });
+        }
+        
+        
+    },[cordinates.lng,cordinates.lat,destination.lat,destination.lng])
+
+    function onDragEnd() {
+        const lngLat = destinationMarker.getLngLat();
+        // coordinates.style.display = 'block';
+        // coordinates.innerHTML = `Longitude: ${lngLat.lng}<br />Latitude: ${lngLat.lat}`;
+    }
+    if(destinationMarker){
+        destinationMarker.on('dragend', onDragEnd);
+    }
     // 
-    
+
+            console.log('destination: ',destination)
+            map?.on('click', (e) => {
+                if(destinationMarker){
+                    destinationMarker.remove()
+                }
+                // document.getElementById('info').innerHTML =
+                // `e.point` is the x, y coordinates of the `mousemove` event
+                // relative to the top-left corner of the map.
+                // JSON.stringify(e.point) +
+                // '<br />' +
+                // `e.lngLat` is the longitude, latitude geographical position of the event.
+                if(!locationSelected){
+                    console.log('selected location cords: ',e.lngLat);
+                    setDestination({lng:e.lngLat.lng,lat:e.lngLat.lat})
+                    setLocationSelected(true)
+                }
+            });
+
+
+            // const el = document.createElement('div');
+            // el.className = 'marker';
+       
+    // getDestinationPoin()
     // map.on('movestart', () => {
     //     console.log('A movestart` event occurred.');
     // });

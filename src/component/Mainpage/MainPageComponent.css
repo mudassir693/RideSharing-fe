@@ -1,4 +1,5 @@
 .MainPageContainer {
+    overflow: hidden;
     background: url('./../../assets/Globe.jpeg');
     /* object-fit:'contain'; */
     background-size: cover;

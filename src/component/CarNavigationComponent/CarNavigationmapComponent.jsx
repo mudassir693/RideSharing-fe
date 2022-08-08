@@ -22,8 +22,8 @@ function CarNavigationmapComponent({setLocationAdded,locationAdded}) {
 
     useLayoutEffect(()=>{
 
-        socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
-        // socket = io("http://localhost:5000",{ transports: ['websocket'] })
+        // socket = io("https://uber-dungeonmaster.herokuapp.com",{ transports: ['websocket'] })
+        socket = io("http://localhost:5000",{ transports: ['websocket'] })
 
         console.log(socket)
         // socket.on('first',()=>{

@@ -21,7 +21,7 @@ function App() {
           {/* <Dashboard socket="socket" /> */}
         </Routes>
       </BrowserRouter>
-          <h1 className="">Hello Mudassir An exciting UBER clones</h1>
+          {/* <h1 className="">Hello Mudassir An exciting UBER clones</h1> */}
     </div>
   );
 }
