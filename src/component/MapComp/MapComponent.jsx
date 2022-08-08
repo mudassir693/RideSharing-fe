@@ -126,7 +126,7 @@ function MapComponent({setCurrentLocation,destinationMarker,setDestinationMarker
             
                 const cords = [[destination.lng,destination.lat], [cordinates.lng,cordinates.lat]];
                 map.fitBounds(cords, {
-                    padding:50
+                    padding:75
                 // padding: {top:25, bottom:15, left: 15, right: 15}
             });
         }

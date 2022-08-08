@@ -31,11 +31,11 @@ function Dashboard({socket}) {
           <div className="text-3xl w-[100%] text-center my-2">
             Sidebar
           </div>
-          {destination.lng!=='' && <div onClick={()=>setDestination({lng:'',lat:''})} className="border-2 border-skyblue  mx-5 my-4 text-center py-2 rounded-lg">
+          {destination.lng!=='' && <div onClick={()=>{setDestination({lng:'',lat:''});;setDirectionSteps([])}} className="border-2 border-skyblue  mx-5 my-4 text-center py-2 rounded-lg">
             Reset Destination
           </div>}
           
-          {destination.lng!=='' && <div onClick={()=>getDirections()} className="border-2 border-skyblue  mx-5 text-center py-2 rounded-lg">
+          {destination.lng!=='' && <div onClick={()=>{getDirections()}} className="border-2 border-skyblue  mx-5 text-center py-2 rounded-lg">
             Get Direction
           </div>}
           {(destination.lng!=='' && distance !== 'NaN')  && <div onClick={()=>getDirections()} className="text-center text-3xl font-semibold my-3">
@@ -53,7 +53,7 @@ function Dashboard({socket}) {
         <div className="mapContainer col-span-12 md:col-span-9 w-[100%] h-[80vh] md:h-[100%]">
           <MapComponent setCurrentLocation={setCurrentLocation} destinationMarker={destinationMarker} setDestinationMarker={setDestinationMarker} locationSelected={locationSelected} setLocationSelected={setLocationSelected} setDestination={setDestination} destination={destination} socket={socket} locationAdded={locationAdded} setLocationAdded={setLocationAdded} />
         </div>
-        <div className="sidebar  md:hidden col-span-12 bg-red-500 min-h-[30vh]">
+        <div className="sidebar  md:hidden col-span-12 min-h-[20vh]">
           <div className="text-3xl w-[100%] text-center my-2">
             Sidebar
           </div>
@@ -64,10 +64,10 @@ function Dashboard({socket}) {
           {destination.lng!=='' && <div onClick={()=>getDirections()} className="border-2 border-skyblue  mx-5 text-center py-2 rounded-lg">
             Get Direction
           </div>}
-          {(destination.lng!=='' && distance !== 'NaN')  && <div onClick={()=>getDirections()} className="text-center text-3xl font-semibold my-3">
+          {(destination.lng!=='' && (distance/1000)!==NaN)  && <div onClick={()=>getDirections()} className="text-center text-3xl font-semibold my-3">
             {(distance/1000).toFixed(2)} km
           </div>}
-          <div className="my-4">
+          <div className="my-5">
                 {destination.lng!=='' && directionSteps?.map((eachStep,id)=>(
                   <div key={id} onClick={()=>setDestination({lng:'',lat:''})} className="text-center my-1">
                       {eachStep.maneuver.instruction}
